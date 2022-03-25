@@ -1,13 +1,13 @@
 # SynFlowMap
 
-SynFlowMap (SYNchronized optical FlOW reMAPping) is a method for motion magnification.
-Paper to be prublished
+SynFlowMap (SYNchronized optical FLOW based reMAPping) is a method for motion magnification.
+Paper under construction.
 
 ## Requirements
 
 ### Basic Demo - with pre-processed videos
 * **Numpy** - For linear algebra operations
-* **OpenCV** - To use Operating System methods
+* **OpenCV** - For optical flow and remapping
 * **Random** - To set random seed at specific places where random operations take place just so it happens the same way everytime it is executed
 * **Pandas** - To create DataFrame, CSV files, etc
 ### Getting the DataBase
