@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 import time
-
+from moviepy.editor import VideoFileClip,ImageSequenceClip
 
 class manage_videos:
     def __init__(self,original_file,mag_file,scale=1,bilatfil_size=1,alpha=1,winsize=15):
@@ -55,7 +55,7 @@ class manage_videos:
     def has_started(self):
         return self.started
     def has_finished(self):        
-        return not self.originalCap.isOpened() and not self.magnifyedCap.isOpened()
+        return not self.originalCap.isOpened() or not self.magnifyedCap.isOpened()
         
 
 
@@ -287,37 +287,38 @@ def drawLine(img,ix,iy,fx,fy,drawing):
             cv2.line(img,(ix,iy),(fx,fy),(255,0,0),5)            
        
 
-if __name__ == "__main__":
-    import os
-    vNames=[('baby','data/baby.mp4','data/PhaseBasedResults/baby-differenceOfIIR-band0.04-0.40-sr1-alpha20-mp0-sigma5-scale0.80-frames1-301-quarterOctave.mp4',20),\
-        ('baby','data/baby.mp4','data/riez/baby.mp4',20),\
-        ('cat_toy','data/cat_toy.mp4','data/VideoAccelerationResults/cat_toy_fm_4_alpha_8_pylevel_4_kernel_DOG.mp4',8),\
-        ('cat_toy2','data/cat_toy.mp4','data/deepmag/cat_toy_7_dynamic.mp4',7),\
-        ('cat_toy3','data/cat_toy.mp4','data/deepmag/cat_toy_8_dynamic.mp4',8),\
-        ('gunshot1','data/gun_shot.mp4','data/VideoAccelerationResults/gun_shot_fm_8_alpha_4_pylevel_4_kernel_DOG.mp4',8),\
-        ('gunshot2','data/gun_shot.mp4','data/VideoAccelerationResults/gun_shot_fm_8_alpha_4_pylevel_4_kernel_INT.mp4',8),\
-        ('gunshot3','data/gun_shot.mp4','data/deepmag/gunshot1_8_dynamic.mp4',8),\
-        ('subway1','data/subway.mp4','data/VideoAccelerationResults/subway_fm_4_alpha_8_pylevel_4_kernel_INT.mp4',8),\
-        ('subway2','data/subway.mp4','data/PhaseBasedResults/subway-FIRWindowBP-band3.60-6.20-sr30-alpha60-mp0-sigma3-scale1.00-frames1-243-octave.mp4',60),\
-        ('drum','data/drum.avi','data/deepmag/drum_10_static.mp4',10),\
-        ('balance1','data/balance.avi','data/riez/balance.mp4',10),\
-        ('balance2','data/balance.avi','data/deepmag/balance_10_1_8_300_Butter.mp4',10),\
-        ('car_engine','data/car_engine.mp4','data/PhaseBasedResults/car_engine-FIRWindowBP-band15.00-25.00-sr400-alpha30-mp0-sigma3-scale1.00-frames1-300-octave.mp4',30),\
-        ('throat','data/throat.mp4','data/PhaseBasedResults/throat-FIRWindowBP-band90.00-110.00-sr1900-alpha100-mp0-sigma3-scale0.67-frames1-300-octave.avi',100),\
-        ('crane_crop1','data/crane_crop.mp4','data/PhaseBasedResults/crane_crop-FIRWindowBP-band0.20-0.25-sr24-alpha75-mp0-sigma5-scale1.00-frames1-215-octave.mp4',75),\
-        ('crane_crop2','data/crane_crop.mp4','data/PhaseBasedResults/crane_crop-FIRWindowBP-band0.20-0.25-sr24-alpha75-mp0-sigma5-scale1.00-frames1-215-halfOctave.mp4',75),\
-        ('crane_crop3','data/crane_crop.mp4','data/PhaseBasedResults/crane_crop-FIRWindowBP-band0.20-0.25-sr24-alpha75-mp0-sigma5-scale1.00-frames1-215-quarterOctave.mp4',75),\
-        ('crane_crop4','data/crane_crop.mp4','data/riez/crane_crop.mp4',75),\
-        ('eye','data/eye.mp4','data/PhaseBasedResults/eye-FIRWindowBP-band30.00-50.00-sr500-alpha75-mp0-sigma4-scale0.40-frames1-600-octave.avi',75),\
-        ('bottle_moving','data/bottle_moving.mp4','data/VideoAccelerationResults/bottle_moving_fm_4_alpha_8_pylevel_4_kernel_INT.mp4',8),\
-        ('bottle_moving2','data/bottle_moving.mp4','data/deepmag/bottle_moving_8_dynamic.mp4',8),\
-        ('drone','data/drone_raw.mp4','data/PhaseBasedResults/drone_raw-differenceOfButterworths-band3.00-7.00-sr30-alpha5-mp0-sigma3-scale1.00-frames1-451-halfOctave.mp4',5),\
-        ('drone','data/drone_raw.mp4','data/deepmag/drone_10_dynamic.mp4',10),\
-        ('womanf1','data/woman.mp4','data/PhaseBasedResults/woman-FIRWindowBP-band0.35-0.71-sr60-alpha15-mp1-sigma3-scale1.00-frames1-600-halfOctave.mp4',15),\
-        ('womanf2','data/woman.mp4','data/PhaseBasedResults/woman-FIRWindowBP-band1.00-1.90-sr60-alpha15-mp1-sigma3-scale1.00-frames1-600-halfOctave.mp4',15),\
-        ('womanf3','data/woman.mp4','data/PhaseBasedResults/woman-FIRWindowBP-band3.00-6.00-sr60-alpha15-mp1-sigma3-scale1.00-frames1-600-halfOctave.mp4',15),\
-        ('basballOnCity','data/basballOnCity.mp4','data/PhaseBasedResults/basballOnCity-FIRWindowBP-band0.10-10.00-sr30-alpha100-mp0-sigma5-scale1.00-frames1-150-halfOctave.mp4',100),\
-        ('basballOnBlack','data/basballOnBlack.mp4','data/PhaseBasedResults/basballOnBlack-FIRWindowBP-band0.10-10.00-sr30-alpha100-mp0-sigma5-scale1.00-frames1-150-halfOctave.mp4',100),\
+
+
+def gui():
+    vNames=[('baby','data/baby.mp4','data/PhaseBasedResults/baby-differenceOfIIR-band0.04-0.40-sr1-alpha20-mp0-sigma5-scale0.80-frames1-301-quarterOctave.mp4',20, 'phase-based'),\
+        ('baby','data/baby.mp4','data/riez/baby.mp4',20, 'riez-pyramids'),\
+        ('cat_toy','data/cat_toy.mp4','data/VideoAccelerationResults/cat_toy_fm_4_alpha_8_pylevel_4_kernel_DOG.mp4',8,'acceleration magnification'),\
+        ('cat_toy2','data/cat_toy.mp4','data/deepmag/cat_toy_7_dynamic.mp4',7, 'deepmag dynamic'),\
+        ('cat_toy3','data/cat_toy.mp4','data/deepmag/cat_toy_8_dynamic.mp4',8, 'deepmag dynamic'),\
+        ('gunshot3','data/gun_shot.mp4','data/deepmag/gunshot1_8_dynamic.mp4',8, 'deepmag dynamic'),\
+        ('subway1','data/subway.mp4','data/VideoAccelerationResults/subway_fm_4_alpha_8_pylevel_4_kernel_INT.mp4',8,'acceleration magnification'),\
+        ('subway2','data/subway.mp4','data/PhaseBasedResults/subway-FIRWindowBP-band3.60-6.20-sr30-alpha60-mp0-sigma3-scale1.00-frames1-243-octave.mp4',60, 'phase-based'),\
+        ('subway3','data/subway.mp4','data/deepmag/subway1_8_static.mp4',8,'deepmag static'),\
+        ('subway4','data/subway.mp4','data/deepmag/subway2_8_dynamic.mp4',8, 'deepmag dynamic'),\
+        ('drum','data/drum.avi','data/deepmag/drum_10_static.mp4',10, 'deepmag static'),\
+        ('balance1','data/balance.mp4','data/riez/balance.mp4',10, 'riez pyramids'),\
+        ('balance2','data/balance.mp4','data/deepmag/balance_10_1_8_300_Butter.mp4',10, 'deepmag static'),\
+        ('car_engine','data/car_engine.mp4','data/PhaseBasedResults/car_engine-FIRWindowBP-band15.00-25.00-sr400-alpha30-mp0-sigma3-scale1.00-frames1-300-octave.mp4',30, 'phase-based'),\
+        ('throat','data/throat.mp4','data/PhaseBasedResults/throat-FIRWindowBP-band90.00-110.00-sr1900-alpha100-mp0-sigma3-scale0.67-frames1-300-octave.avi',100, 'phase-based'),\
+        ('crane_crop1','data/crane_crop.mp4','data/PhaseBasedResults/crane_crop-FIRWindowBP-band0.20-0.25-sr24-alpha75-mp0-sigma5-scale1.00-frames1-215-octave.mp4',75, 'phase-based'),\
+        ('crane_crop2','data/crane_crop.mp4','data/PhaseBasedResults/crane_crop-FIRWindowBP-band0.20-0.25-sr24-alpha75-mp0-sigma5-scale1.00-frames1-215-halfOctave.mp4',75, 'phase-based'),\
+        ('crane_crop3','data/crane_crop.mp4','data/PhaseBasedResults/crane_crop-FIRWindowBP-band0.20-0.25-sr24-alpha75-mp0-sigma5-scale1.00-frames1-215-quarterOctave.mp4',75, 'phase-based'),\
+        ('crane_crop4','data/crane_crop.mp4','data/riez/crane_crop.mp4',75, 'riez-pyramids'),\
+        ('eye','data/eye.mp4','data/PhaseBasedResults/eye-FIRWindowBP-band30.00-50.00-sr500-alpha75-mp0-sigma4-scale0.40-frames1-600-octave.avi',75, 'phase-based'),\
+        ('bottle_moving','data/bottle_moving.mp4','data/VideoAccelerationResults/bottle_moving_fm_4_alpha_8_pylevel_4_kernel_INT.mp4',8,'acceleration magnification'),\
+        ('bottle_moving2','data/bottle_moving.mp4','data/deepmag/bottle_moving_8_dynamic.mp4',8, 'deepmag dynamic'),\
+        ('drone','data/drone_raw.mp4','data/PhaseBasedResults/drone_raw-differenceOfButterworths-band3.00-7.00-sr30-alpha5-mp0-sigma3-scale1.00-frames1-451-halfOctave.mp4',5, 'phase-based'),\
+        ('drone','data/drone_raw.mp4','data/deepmag/drone_10_dynamic.mp4',10, 'deepmag dynamic'),\
+        ('womanf1','data/woman.mp4','data/PhaseBasedResults/woman-FIRWindowBP-band0.35-0.71-sr60-alpha15-mp1-sigma3-scale1.00-frames1-600-halfOctave.mp4',15, 'phase-based'),\
+        ('womanf2','data/woman.mp4','data/PhaseBasedResults/woman-FIRWindowBP-band1.00-1.90-sr60-alpha15-mp1-sigma3-scale1.00-frames1-600-halfOctave.mp4',15, 'phase-based'),\
+        ('womanf3','data/woman.mp4','data/PhaseBasedResults/woman-FIRWindowBP-band3.00-6.00-sr60-alpha15-mp1-sigma3-scale1.00-frames1-600-halfOctave.mp4',15, 'phase-based'),\
+        ('basballOnCity','data/basballOnCity.mp4','data/PhaseBasedResults/basballOnCity-FIRWindowBP-band0.10-10.00-sr30-alpha100-mp0-sigma5-scale1.00-frames1-150-halfOctave.mp4',100, 'phase-based'),\
+        ('basballOnBlack','data/basballOnBlack.mp4','data/PhaseBasedResults/basballOnBlack-FIRWindowBP-band0.10-10.00-sr30-alpha100-mp0-sigma5-scale1.00-frames1-150-halfOctave.mp4',100, 'phase-based'),\
     ]    
     vNames = [v for v in vNames if os.path.isfile(v[1]) and os.path.isfile(v[2])]
 
@@ -334,6 +335,10 @@ if __name__ == "__main__":
     alpham_pos_default=100
     bifilt_pos_default=0
     isSaving=False
+    alpha_pos=alpham_pos_default
+    scale_pos=scale_pos_default
+    bilfilt_pos=bifilt_pos_default
+    OF_pos=OF_pos_default
     #buttons: restart, next video, invert alpha, save image, save result video(next iteration), save comparison
     v=0
     while True:
@@ -341,10 +346,10 @@ if __name__ == "__main__":
         manager=manage_videos(vNames[v][1],vNames[v][2])
         manager.start()
         cv2.namedWindow('proposed',cv2.WND_PROP_FULLSCREEN)
-        cv2.createTrackbar('OF window size','proposed',OF_pos_default,11,nothing)
-        cv2.createTrackbar('scale','proposed',scale_pos_default,3,nothing)
-        cv2.createTrackbar('alpha','proposed',alpham_pos_default,300,nothing)
-        cv2.createTrackbar('bilfilter','proposed',bifilt_pos_default,7,nothing)
+        cv2.createTrackbar('OF window size','proposed',OF_pos,11,nothing)
+        cv2.createTrackbar('scale','proposed',scale_pos,3,nothing)
+        cv2.createTrackbar('alpha','proposed',alpha_pos,300,nothing)
+        cv2.createTrackbar('bilfilter','proposed',bilfilt_pos,7,nothing)
         cv2.createTrackbar('video','proposed',v,len(vNames)-1,nothing)
         param=[]
         cv2.setMouseCallback('proposed',lineToFolow,param)
@@ -352,15 +357,19 @@ if __name__ == "__main__":
         drawing=False
         restart=True
         paused=False
+        imgs=[]
         print('processing videos',vNames[v][1],vNames[v][2])
         while(not manager.has_finished()):
             if not paused:
                 lastFrameTime = time.time()    
-                
-                manager.sfm.alpha=cv2.getTrackbarPos('alpha','proposed')/100*invert
-                manager.sfm.scale=2**cv2.getTrackbarPos('scale','proposed')
-                manager.sfm.bilatfil_size=cv2.getTrackbarPos('bilfilter','proposed')*2+1
-                manager.sfm.winsize=cv2.getTrackbarPos('OF window size','proposed')*2+3
+                alpha_pos=cv2.getTrackbarPos('alpha','proposed')
+                scale_pos=cv2.getTrackbarPos('scale','proposed')
+                bilfilt_pos=cv2.getTrackbarPos('bilfilter','proposed')
+                OF_pos=cv2.getTrackbarPos('OF window size','proposed')
+                manager.sfm.alpha=alpha_pos/100*invert
+                manager.sfm.scale=2**scale_pos
+                manager.sfm.bilatfil_size=bilfilt_pos*2+1
+                manager.sfm.winsize=OF_pos*2+3
                 
                 video_num=cv2.getTrackbarPos('video','proposed')
                 if cv2.getTrackbarPos('video','proposed')!=v:
@@ -370,6 +379,12 @@ if __name__ == "__main__":
                     break
                 ret,frame=manager.nextFrame()
                 if not ret:
+                    if isSaving:
+                        clip = ImageSequenceClip(imgs, fps=int(manager.originalCap.get(cv2.CAP_PROP_FPS)))
+                        clip.write_videofile(vidName)
+                        print('         Done. ')
+                        print('saving video as', vidName)
+                        isSaving=False
                     break
                 thisFrameTime = time.time()
                 
@@ -380,8 +395,13 @@ if __name__ == "__main__":
                 cv2.putText(orig,"Optical Flow",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
 
                 mag=manager.currentMag
-                cv2.putText(mag,f"Eulerian Magnification. Alpha={vNames[v][3]}",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
-                cv2.putText(frame,f"SynFlowMap (ours). Alpha={vNames[v][3]*manager.sfm.alpha}",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+                cv2.putText(mag,f"Eulerian Magnification",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+                cv2.putText(mag,f"Method: {vNames[v][4]}",(3,50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+                cv2.putText(mag,f"alpha: {vNames[v][3]}",(3,75), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+                
+                cv2.putText(frame,f"SynFlowMap (ours)",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+                cv2.putText(frame,f"alpha:{vNames[v][3]*manager.sfm.alpha}",(3,50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+                cv2.putText(frame,f"scale:{manager.sfm.scale}",(3,75), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
                 
                 
                 
@@ -392,13 +412,28 @@ if __name__ == "__main__":
                 cv2.imshow('proposed',toDisplay)
                 #if cv2.waitKey(int(1000/oFps)) & 0xFF == ord('q'):
                 if isSaving:
-                    out.write(toDisplay)
+                    imgs.append(cv2.cvtColor(toDisplay, cv2.COLOR_BGR2RGB))
+
+
             key=cv2.waitKey(int(1)) & 0xFF
             if key == ord('q'):
-                break
+                return
             
             elif key  == ord('r'):
                 print('restarting')
+                print(alpham_pos_default)
+                alpha_pos=alpham_pos_default
+                scale_pos=scale_pos_default
+                bilfilt_pos=bifilt_pos_default
+                OF_pos=OF_pos_default
+                cv2.namedWindow('proposed',cv2.WND_PROP_FULLSCREEN)
+                cv2.createTrackbar('OF window size','proposed',OF_pos,11,nothing)
+                cv2.createTrackbar('scale','proposed',scale_pos,3,nothing)
+                print(alpha_pos)
+                cv2.createTrackbar('alpha','proposed',alpha_pos,300,nothing)
+                cv2.createTrackbar('bilfilter','proposed',bilfilt_pos,7,nothing)
+                cv2.createTrackbar('video','proposed',v,len(vNames)-1,nothing)
+                invert=1
                 manager.start()
                 frameCount=0
                 fpsSum=0
@@ -409,7 +444,8 @@ if __name__ == "__main__":
                 if not paused:
                     print('restarting and saving the result...')
                     manager.start()
-                    vidName='data/proposedResults/'+vNames[v][0]
+                    imgs=[]
+                    vidName='data/proposedResults/SFM_'+vNames[v][0]
                     if alpha!=alphaDefault:
                         vidName=vidName+'_alpha'+str(manager.sfm.alpha)
                     if scale!=scaleDefault:
@@ -417,13 +453,7 @@ if __name__ == "__main__":
                     #    manager.sfm.bilatfil_size                  
                     #manager.sfm.winsize
                     vidName=vidName+'.mp4'
-                    print('saving video as', vidName)
-                    out = cv2.VideoWriter(vidName,
-                                          cv2.VideoWriter_fourcc('M', 'P', '4', 'V'),
-                                          #cv2.VideoWriter_fourcc('M','J','P','G'), 
-                                          int(manager.originalCap.get(cv2.CAP_PROP_FPS)), 
-                                          (int(manager.originalCap.get(cv2.CAP_PROP_FRAME_WIDTH)),int(manager.originalCap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-                                          )
+                    
                     isSaving=True
                     restart=True
                     continue
@@ -432,3 +462,9 @@ if __name__ == "__main__":
                 paused=not paused
             elif key == ord('h'):
                 printInstructions()
+
+            
+                
+if __name__ == "__main__":
+    import os
+    gui()
