@@ -2,6 +2,7 @@ from synflowmap import SynFlowMap
 import cv2
 import os
 import time
+from moviepy.editor import VideoFileClip,ImageSequenceClip
 
 def nothing(val):
     pass
@@ -22,6 +23,7 @@ cv2.createTrackbar('alpha f3','multi frequency',200,400,nothing)
 cv2.createTrackbar('scale','multi frequency',0,4,nothing)
 sfm=SynFlowMap()
 
+imgs=[]
 while ovcap.isOpened() and f1vcap.isOpened() and f2vcap.isOpened() and f3vcap.isOpened():
     lastFrameTime = time.time()    
 
@@ -54,11 +56,15 @@ while ovcap.isOpened() and f1vcap.isOpened() and f2vcap.isOpened() and f3vcap.is
     fps=1/(thisFrameTime-lastFrameTime)
     
     cv2.putText(oframe,"Original",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
-    cv2.putText(f1frame,"Frequency 1",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
-    cv2.putText(f2frame,"Frequency 2",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
-    cv2.putText(f3frame,"Frequency 3",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
-    cv2.putText(result,"Result, {:2.1f} fps".format(fps),(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(f1frame,"PB. Frequency: [0.35~0.71] Hz",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(f2frame,"PB. Frequency: [1.00~1.90] Hz",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(f3frame,"PB. Frequency: [3.00~6.00] Hz",(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(result,"SFM (our), {:2.1f} fps".format(fps),(3,25), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(result,"am1:, {:2.1f}".format(a1),(3,50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(result,"am2:, {:2.1f}".format(a2),(3,75), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
+    cv2.putText(result,"am3:, {:2.1f}".format(a3),(3,100), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,255),2,cv2.LINE_AA)
 
+    
     hh,wh=oframe.shape[0]//2,oframe.shape[1]//2
     cv2.resize(oframe,(wh,hh))
     toDisplay=cv2.hconcat([cv2.resize(oframe,(wh,hh)),cv2.resize(f1frame,(wh,hh))])
@@ -66,8 +72,18 @@ while ovcap.isOpened() and f1vcap.isOpened() and f2vcap.isOpened() and f3vcap.is
     toDisplay=cv2.hconcat([toDisplay,result])
     
     cv2.imshow('multi frequency',toDisplay)
-    #if cv2.waitKey(int(1000/oFps)) & 0xFF == ord('q'):
+
+    imgs.append(cv2.cvtColor(toDisplay, cv2.COLOR_BGR2RGB))
+    
     key=cv2.waitKey(int(1)) & 0xFF
     if key == ord('q'):
         break
+    #if key == ord('r'):
+    #    print('restarting')
+    #    imgs=[]
+    #    continue
     
+clip = ImageSequenceClip(imgs, fps=int(ovcap.get(cv2.CAP_PROP_FPS)))
+clip.write_videofile('proposedResults/SFM_woman.mp4')
+print('         Done. ')
+
