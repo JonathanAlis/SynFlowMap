@@ -23,4 +23,4 @@ Paper under construction.
 ### Research Papers
 
 * [Hybrid Motion Magnification based on Same-Frame Optical Flow Computations](https://ieeexplore.ieee.org/iel7/9287028/9287048/09287152.pdf?casa_token=q4Ya2dqwq8UAAAAA:vAitDPKaK8UGNVuHNMsSkFVC0P5YhhhF2x63i8N9IQtRQrgIPFF_SWfUHMCL-c7sFr2Fr1vsFQ)
-
+* [SynFlowMap: A synchronized optical flow remapping for video motion magnification](https://www.sciencedirect.com/science/article/abs/pii/S0923596524001048?via%3Dihub)
